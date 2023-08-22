@@ -10,6 +10,6 @@ A Beli for movies (...and in the future TV shows, books, etc.)
 ## Future Features
 - [ ] Friends
 - [ ] Feed
-- [ ] Movie reccomendations
+- [ ] Movie recommendations
 - [ ] TV shows
 - [ ] Books
