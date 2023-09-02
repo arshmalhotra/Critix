@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, session, abort
+from flask import Blueprint, render_template, session, abort, request
 from services.authentication import sign_in_service, sign_up_service
 
 sign_in = Blueprint('sign_in', __name__)
@@ -10,8 +10,10 @@ sign_up = Blueprint('sign_up', __name__)
 @sign_up.route('/sign_up', methods=['POST'])
 def sign_up_route():
     try:
-        # parse http request
-        return sign_up_service.sign_up()
-    except:
-        # return http status code and error message
-        return "Error during sign up"
+        data = request.get_json() # python dict
+        temp = sign_up_service.sign_up(data)
+        res_body = {'message': temp[0]}
+        return res_body, temp[1]
+    except Exception as e:
+        res_body = {'Message': repr(e)}
+        return res_body, 500

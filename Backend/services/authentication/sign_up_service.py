@@ -1,18 +1,18 @@
-def sign_up(email="", phoneNum="", username="", password="", name="", profilePic="default_pic"):
-    if email != "" and phoneNum == "" and username == "":
-        # make db call
-        pass
+def sign_up(data):
+    if data['email'] != '' and data['phoneNum'] == '' and data['username'] == '':
+        # make db call and do if else
+        return ['checking database for email', 200]
 
-    if email == "" and phoneNum != "" and username == "":
+    if data['email'] == '' and data['phoneNum'] != '' and data['username'] == '':
         # make db call
-        pass
+        return ['checking database for phoneNum', 200]
 
-    if email == "" and phoneNum == "" and username != "":
+    if data['email'] == '' and data['phoneNum'] == '' and data['username'] != '':
         # make db call
-        pass
+        return ['checking database for username', 200]
 
-    if email != "" and phoneNum != "" and username != "" and password != "" and name != "":
+    if data['email'] != '' and data['phoneNum'] != '' and data['username'] != '' and data['password'] != '' and data['name'] != '':
         # make db call
-        pass
-
-    return "did sign up"
+        return ['inserting user data into db', 201]
+    
+    return ['general error', 500] # try to remove
