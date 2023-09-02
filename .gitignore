@@ -2,7 +2,7 @@
 /iOS/Movi/.DS_Store
 node_modules/
 
-.venv/
+*/venv/*
 
 *.pyc
 __pycache__/

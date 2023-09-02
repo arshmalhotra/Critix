@@ -4,6 +4,7 @@ from services.authentication import sign_in_service, sign_up_service
 sign_in = Blueprint('sign_in', __name__)
 @sign_in.route('/sign_in')
 def sign_in_route():
+    # create GetSignInChallengeRequest
     return sign_in_service.sign_in()
 
 sign_up = Blueprint('sign_up', __name__)
