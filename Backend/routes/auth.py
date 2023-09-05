@@ -11,9 +11,9 @@ sign_up = Blueprint('sign_up', __name__)
 def sign_up_route():
     try:
         data = request.get_json() # python dict
-        temp = sign_up_service.sign_up(data)
-        res_body = {'message': temp[0]}
-        return res_body, temp[1]
+        temp = sign_up_service.SignUpService(data)
+        res_body = {'message': temp.sign_up()[0]}
+        return res_body, temp.sign_up()[1]
     except Exception as e:
         res_body = {'Message': repr(e)}
         return res_body, 500
