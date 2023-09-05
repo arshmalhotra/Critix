@@ -1,43 +1,50 @@
 import os
 import base64
 
-import GetSignInChallengeRequest, GetSignInChallengeResponse from Components.Authentication.GetSignInChallenge
-import getUserSpecificSalt from database.connector # TODO change into class?
+from Components.Authentication.GetSignInChallenge import GetSignInChallengeRequest, GetSignInChallengeResponse
+from database.connector import getUserSpecificSalt
 
 class SignInService:
 
-    def __init__(self):
-        pass
-
-    def executeGetSignInChallengeRequest(self,
+    @classmethod
+    def executeGetSignInChallengeRequest(
+        cls,
         request: GetSignInChallengeRequest
     ) -> GetSignInChallengeResponse:
         response = GetSignInChallengeResponse()
-        __getServerSalt(request, response) # sets it in response
-        __generateServerNonce(response=response)
 
-        return response
+        # Get salt from server
+        try:
+            user = User.fromGetSignInChallengeRequest(request)
+            try:
+                passwordSalt = getUserSpecificSalt(user)
+            except Exception as e:
+                print(e, "No user was found.")
+                response.setMessage(e)
+                response.setStatusCode(404)
+            else:
+                response.setPasswordSalt(passwordSalt) # TODO might need conversion
+                response.setNonce(__generateServerNonce())
+        except Exception as e:
+            print(e, "Error converting GetSignInChallengeRequest to User.")
+            response.setMessage(e)
+            response.setStatusCode(400)
+        finally:
+            return response
 
-    def __getServerSalt(request: GetSignInChallengeRequest,
-        response: GetSignInChallengeResponse
-    ):
-        user = User.createFromGetSignInChallengeRequest(request)
-        getUserSpecificSalt(user, response)
+    def __generateServerNonce(length: int = 16) -> bytes:
+        return base64.b64encode(os.urandom(length), altchars=b'-_'))
 
-
-    def __generateServerNonce(length: int = 16,
-        response: GetSignInChallengeResponse
-    ) -> bytes:
-        response.setNonce(base64.b64encode(os.urandom(length), altchars=b'-_'))
-
-
-    def nonceHashAuthenticationRequest(self):
+    @classmethod
+    def nonceHashAuthenticationRequest(cls):
         # return nonceHashAuthenticationResponse
         pass
 
-    def __getPasswordHashRequest(self):
+    @classmethod
+    def __getPasswordHashRequest(cls):
         # return __getPasswordHashResponse
         pass
 
-    def __compareNonceHashes(self):
+    @classmethod
+    def __compareNonceHashes(cls):
         pass

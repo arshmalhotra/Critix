@@ -4,7 +4,7 @@ class User:
     def __init__(self,
         userId: int, email: str = None, username: str = None,
         phoneNumber: str = None, passwordHash: bytes = None,
-        passwordSalt: bytes = None, profilePicture: dict = {}
+        passwordSalt: bytes = None, profilePicture: Dict = dict()
     ):
         self.__userId = userId
         self.__email = email
@@ -14,7 +14,14 @@ class User:
         self.__passwordSalt = passwordSalt
         self.__profilePicture = profilePicture
 
-    def createFromGetSignInChallengeRequest(request: GetSignInChallengeRequest) -> User:
+    @classmethod
+    def fromGetSignInChallengeRequest(
+        cls,
+        request: GetSignInChallengeRequest
+    ) -> User:
+        if not request.isValid():
+            raise ValueError('No values found for email or username.')
+            
         newUser = User(email=request.getEmail(), username=request.getUsername())
         return newUser
 
@@ -42,7 +49,7 @@ class User:
         self.__phoneNumber = phoneNumber
         return self
 
-    def getPasswordDetails(self) -> {}:
+    def getPasswordDetails(self) -> dict:
         return {
             'passwordHash': self.__passwordHash,
             'passwordSalt': self.__passwordSalt
@@ -55,9 +62,9 @@ class User:
         self.__passwordSalt = passwordSalt
         return self
 
-    def getProfilePicture(self) -> {}:
+    def getProfilePicture(self) -> dict:
         return self.__profilePicture
 
-    def setProfilePicture(self, profilePicture: dict) -> User:
+    def setProfilePicture(self, profilePicture: Dict) -> User:
         self.__profilePicture = profilePicture
         return self

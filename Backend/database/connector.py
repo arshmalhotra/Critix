@@ -30,7 +30,7 @@ connection = pymysql.connect(host=host,
 #         result = cursor.fetchone()
 #         print(result)
 
-def getUserSpecificSalt(user: User, response: GetSignInChallengeResponse):
+def getUserSpecificSalt(user: User) -> bytes:
     with connection:
         with connection.cursor() as cursor:
             sql = '''
@@ -43,4 +43,4 @@ def getUserSpecificSalt(user: User, response: GetSignInChallengeResponse):
             # modify if need to parse
             result = cursor.fetchone()
 
-            response.setPasswordSalt(result)
+            return result
