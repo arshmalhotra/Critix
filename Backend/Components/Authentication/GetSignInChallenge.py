@@ -1,3 +1,4 @@
+from __future__ import annotations
 from flask import make_response
 
 class GetSignInChallengeRequest:
@@ -7,7 +8,7 @@ class GetSignInChallengeRequest:
         self.__username = username
 
     @classmethod
-    def fromHttpRequestBody(cls, body: Dict) -> GetSignInChallengeRequest:
+    def fromHttpRequestBody(cls, body: dict) -> GetSignInChallengeRequest:
         email = body.get('email')
         if not isinstance(email, str) and email != None:
             raise TypeError(

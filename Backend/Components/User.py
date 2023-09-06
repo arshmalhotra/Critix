@@ -1,10 +1,11 @@
+from __future__ import annotations
 
 class User:
 
     def __init__(self,
         userId: int, email: str = None, username: str = None,
         phoneNumber: str = None, passwordHash: bytes = None,
-        passwordSalt: bytes = None, profilePicture: Dict = dict()
+        passwordSalt: bytes = None, profilePicture: dict = dict()
     ):
         self.__userId = userId
         self.__email = email
@@ -21,7 +22,7 @@ class User:
     ) -> User:
         if not request.isValid():
             raise ValueError('No values found for email or username.')
-            
+
         newUser = User(email=request.getEmail(), username=request.getUsername())
         return newUser
 
@@ -65,6 +66,6 @@ class User:
     def getProfilePicture(self) -> dict:
         return self.__profilePicture
 
-    def setProfilePicture(self, profilePicture: Dict) -> User:
+    def setProfilePicture(self, profilePicture: dict) -> User:
         self.__profilePicture = profilePicture
         return self

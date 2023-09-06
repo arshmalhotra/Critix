@@ -33,7 +33,7 @@ class SignInService:
             return response
 
     def __generateServerNonce(length: int = 16) -> bytes:
-        return base64.b64encode(os.urandom(length), altchars=b'-_'))
+        return base64.b64encode(os.urandom(length), altchars=b'-_')
 
     @classmethod
     def nonceHashAuthenticationRequest(cls):

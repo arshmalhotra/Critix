@@ -10,14 +10,12 @@ def get_sign_in_challenge_route():
         return make_response('Request Error: No request body provided.', 400)
     # Create request object
     try:
-        challengeRequest = GetSignInChallengeRequest
-            .fromHttpRequestBody(req_body)
+        challengeRequest = GetSignInChallengeRequest.fromHttpRequestBody(req_body)
     except Exception as e:
         return make_response(e, 400)
 
     # Execute request and get response
-    challengeResponse = SignInService
-        .executeGetSignInChallengeRequest(challengeRequest)
+    challengeResponse = SignInService.executeGetSignInChallengeRequest(challengeRequest)
     res = challengeResponse.toFlaskResponse()
 
     return res

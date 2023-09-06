@@ -1,4 +1,5 @@
 import pymysql.cursors
+from Components.User import User
 
 host = ''
 user = ''
@@ -6,11 +7,12 @@ password = ''
 database = ''
 
 # Connect to the database
-connection = pymysql.connect(host=host,
-                             user=user,
-                             password=password,
-                             database=database,
-                             cursorclass=pymysql.cursors.DictCursor)
+# connection = pymysql.connect(host=host,
+#                              user=user,
+#                              password=password,
+#                              database=database,
+#                              cursorclass=pymysql.cursors.DictCursor)
+
 # Sample Code:
 
 # with connection:
