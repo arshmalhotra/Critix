@@ -14,6 +14,7 @@ class User:
         self.__passwordHash = passwordHash
         self.__passwordSalt = passwordSalt
         self.__profilePicture = profilePicture
+        self.__temporaryNonce = None
 
     @classmethod
     def fromGetSignInChallengeRequest(
@@ -69,3 +70,26 @@ class User:
     def setProfilePicture(self, profilePicture: dict) -> User:
         self.__profilePicture = profilePicture
         return self
+
+    def getTemporaryNonce(self) -> bytes:
+        return self.__temporaryNonce
+
+    def setTemporaryNonce(self, serverNonce: bytes) -> User:
+        self.__temporaryNonce = serverNonce
+        return self
+
+    def createNonceHash(self, clientNonce: bytes) -> bytes:
+        if self.__passwordHash == None:
+            raise ValueError('No password hash found.')
+        if self.__temporaryNonce == None:
+            raise ValueError('No server nonce found.')
+        if clientNonce == None:
+            raise ValueError('No client nonce found.')
+        combination = self.__temporaryNonce + self.__passwordHash + self.clientNonce
+        serverNonceHash = bcrypt.kdf(
+            password=combination,
+            salt=b'nonce_hash',
+            desired_key_bytes=64
+            rounds=100
+        )
+        return serverNonceHash

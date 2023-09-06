@@ -32,7 +32,31 @@ database = ''
 #         result = cursor.fetchone()
 #         print(result)
 
-def getUserSpecificSalt(user: User) -> bytes:
+def storeUserPasswordHash() -> None:
+    pass
+
+def getUserPasswordHash(user: User) -> None:
+    with connection:
+        with connection.cursor() as cursor:
+            sql = '''
+                SELECT `password_hash`
+                FROM `Users`
+                WHERE `email`=%s OR `username`=%s
+            '''
+            rows = cursor.execute(sql, (user.getEmail(), user.getUsername(),))
+            if row != 1:
+                raise DatabaseError(
+                    f'No user found: ({user.getEmail()}, {user.getUsername()})'
+                )
+            # fetches first result
+            # modify if need to parse
+            passwordHash = cursor.fetchone()
+            user.setPasswordHash(passwordHash)
+
+def storeUserSpecificSalt() -> None:
+    pass
+
+def getUserSpecificSalt(user: User) -> None:
     with connection:
         with connection.cursor() as cursor:
             sql = '''
@@ -40,9 +64,51 @@ def getUserSpecificSalt(user: User) -> bytes:
                 FROM `Users`
                 WHERE `email`=%s OR `username`=%s
             '''
-            cursor.execute(sql, (user.getEmail(), user.getUsername(),))
+            rows = cursor.execute(sql, (user.getEmail(), user.getUsername(),))
+            if row != 1:
+                raise DatabaseError(
+                    f'No user found: ({user.getEmail()}, {user.getUsername()})'
+                )
             # fetches first result
             # modify if need to parse
-            result = cursor.fetchone()
+            passwordSalt = cursor.fetchone()
+            user.setPasswordSalt(passwordSalt)
 
-            return result
+def storeTemporaryNonce(user: User) -> None:
+    with connection:
+        with connection.cursor() as cursor:
+            sql = f'''
+                UPDATE `Users`
+                SET `temporary_nonce` = {user.getTemporaryNonce()}
+                WHERE `email`=%s OR `username`=%s
+            '''
+            rows = cursor.execute(sql, (user.getEmail(), user.getUsername(),))
+
+        if rows != 1:
+            connection.rollback()
+            raise DatabaseError(
+                f'Error updating user ({user.getEmail()}, {user.getUsername()})'
+                f' with server nonce'
+            )
+        connection.commit()
+
+def getTemporaryNonce(user: User) -> None:
+    with connection:
+        with connection.cursor() as cursor:
+            sql = '''
+                SELECT `temporary_nonce`
+                FROM `Users`
+                WHERE `email`=%s OR `username`=%s
+            '''
+            cursor.execute(sql, (user.getEmail(), user.getUsername(),))
+            # TODO verify if there's only 1?
+            # fetches first result
+            # modify if need to parse
+            serverNonce = cursor.fetchone()
+
+            # Delete server nonce from database
+            user.setTemporaryNonce(None)
+            storeTemporaryNonce(user)
+
+            # Set server nonce for user
+            user.setTemporaryNonce(serverNonce)

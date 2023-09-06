@@ -3,6 +3,14 @@ from services.authentication import sign_up_service
 from services.authentication.sign_in_service import SignInService
 
 get_sign_in_challenge = Blueprint('get_sign_in_challenge', __name__)
+"""
+/get_sign_in_challenge
+Body Requirements:
+{
+    'email': [optional]
+    'username': [optional]
+}
+"""
 @get_sign_in_challenge.route('/get_sign_in_challenge', methods=['POST'])
 def get_sign_in_challenge_route():
     req_body = request.form
@@ -20,6 +28,16 @@ def get_sign_in_challenge_route():
 
     return res
 
+"""
+/sign_in
+Body Requirements:
+{
+    email: [optional]
+    username: [optional]
+    nonceHash: [required]
+    clientNonce: [required]
+}
+"""
 sign_in = Blueprint('sign_in', __name__)
 @sign_in.route('/sign_in')
 def sign_in_route():
