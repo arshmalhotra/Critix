@@ -1,13 +1,14 @@
 from __future__ import annotations
-from flask import make_response
+from flask import make_response, Response
 
-class NonceHashAuthenticationRequest:
+from Components.Authentication.SignIn import SignInRequest, SignInResponse
+
+class NonceHashAuthenticationRequest(SignInRequest):
 
     def __init__(self, email: str = '', username: str = '',
         nonceHash: bytes = b'', clientNonce: bytes = b''
     ):
-        self.__email = email
-        self.__username = username
+        super().__init__(email, username)
         self.__nonceHash = nonceHash
         self.__clientNonce = clientNonce
 
@@ -38,17 +39,28 @@ class NonceHashAuthenticationRequest:
             )
         return cls(email, username, nonceHash, clientNonce)
 
-    def getEmail(self) -> str:
-        return self.__email
-
-    def getUsername(self) -> str:
-        return self.__username
-
     def getNonceHash(self) -> bytes:
         return self.__nonceHash
 
     def getClientNonce(self) -> bytes:
         return self.__clientNonce
 
-class NonceHashAuthenticationResponse:
-    pass
+class NonceHashAuthenticationResponse(SignInResponse):
+
+    def __init__(self):
+        super().__init__()
+        self.__authToken = None
+
+    def getAuthToken(self) -> str:
+        return self.__authToken
+
+    def setAuthToken(self, authToken: str) -> NonceHashAuthenticationResponse:
+        self.__authToken = authToken
+        return self
+
+    def toFlaskResponse(self) -> Response:
+        responseBody = {}
+        responseBody['message'] = self.__message
+        responseBody['authToken'] = self.__authToken
+
+        return make_response(jsonify(responseBody), self.__statuscode)

@@ -1,4 +1,5 @@
 import pymysql.cursors
+from pymysql import InternalError, DatabaseError
 from Components.User import User
 
 host = ''
@@ -32,8 +33,27 @@ database = ''
 #         result = cursor.fetchone()
 #         print(result)
 
-def storeUserPasswordHash() -> None:
-    pass
+def getUserId(user: User) -> None:
+    with connection:
+        with connection.cursor() as cursor:
+            sql = '''
+                SELECT `user_id`
+                FROM `Users`
+                WHERE `email`=%s OR `username`=%s
+            '''
+            rows = cursor.execute(sql, (user.getEmail(), user.getUsername(),))
+            if rows == 0:
+                raise ValueError(
+                    f'No user found: ({user.getEmail()}, {user.getUsername()})'
+                )
+            if rows != 1:
+                raise InternalError(
+                    f'Too many users matching: ({user.getEmail()},'
+                    f' {user.getUsername()})'
+                )
+
+            userId = cursor.fetchone()
+            user.setUserId(userId)
 
 def getUserPasswordHash(user: User) -> None:
     with connection:
@@ -44,17 +64,19 @@ def getUserPasswordHash(user: User) -> None:
                 WHERE `email`=%s OR `username`=%s
             '''
             rows = cursor.execute(sql, (user.getEmail(), user.getUsername(),))
-            if row != 1:
-                raise DatabaseError(
+            if rows == 0:
+                raise ValueError(
                     f'No user found: ({user.getEmail()}, {user.getUsername()})'
+                )
+            if rows != 1:
+                raise InternalError(
+                    f'Too many users matching: ({user.getEmail()},'
+                    f' {user.getUsername()})'
                 )
             # fetches first result
             # modify if need to parse
             passwordHash = cursor.fetchone()
             user.setPasswordHash(passwordHash)
-
-def storeUserSpecificSalt() -> None:
-    pass
 
 def getUserSpecificSalt(user: User) -> None:
     with connection:
@@ -65,9 +87,14 @@ def getUserSpecificSalt(user: User) -> None:
                 WHERE `email`=%s OR `username`=%s
             '''
             rows = cursor.execute(sql, (user.getEmail(), user.getUsername(),))
-            if row != 1:
-                raise DatabaseError(
+            if rows == 0:
+                raise ValueError(
                     f'No user found: ({user.getEmail()}, {user.getUsername()})'
+                )
+            if rows != 1:
+                raise InternalError(
+                    f'Too many users matching: ({user.getEmail()},'
+                    f' {user.getUsername()})'
                 )
             # fetches first result
             # modify if need to parse

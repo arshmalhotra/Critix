@@ -1,4 +1,5 @@
 from __future__ import annotations
+import jwt
 
 class User:
 
@@ -29,6 +30,10 @@ class User:
 
     def getUserId(self) -> int:
         return self.__userId
+
+    def setUserId(self, userId: int) -> User:
+        self.__userId = userId
+        return self
 
     def getEmail(self) -> str:
         return self.__email
@@ -88,8 +93,30 @@ class User:
         combination = self.__temporaryNonce + self.__passwordHash + self.clientNonce
         serverNonceHash = bcrypt.kdf(
             password=combination,
-            salt=b'nonce_hash',
-            desired_key_bytes=64
+            salt=b'nonce_hash', # TODO replace with app.config.get('SECRET_KEY')
+            desired_key_bytes=64,
             rounds=100
         )
         return serverNonceHash
+
+    def encodeAuthToken(self) -> str:
+        if self.__userId == None:
+            raise ValueError('No user ID found.')
+
+        payload = {
+            'uid': self.__userId
+        }
+        return jwt.encode(
+            payload,
+            'auth_token_key' # app.config.get('SECRET_KEY'),
+        )
+
+    def decodeAuthToken(self, authToken) -> str:
+        if self.__userId == None:
+            raise ValueError('No user ID found.')
+
+        payload = jwt.decode(
+            auth_token,
+            'auth_token_key' # app.config.get('SECRET_KEY')
+        )
+        return payload['uid']

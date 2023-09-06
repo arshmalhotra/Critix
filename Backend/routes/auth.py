@@ -5,10 +5,16 @@ from services.authentication.sign_in_service import SignInService
 get_sign_in_challenge = Blueprint('get_sign_in_challenge', __name__)
 """
 /get_sign_in_challenge
-Body Requirements:
+Request:
 {
-    'email': [optional]
-    'username': [optional]
+    email: str [optional]
+    username: str [optional]
+}
+Response:
+{
+    message: str
+    nonce: bytes
+    salt: bytes
 }
 """
 @get_sign_in_challenge.route('/get_sign_in_challenge', methods=['POST'])
@@ -30,18 +36,37 @@ def get_sign_in_challenge_route():
 
 """
 /sign_in
-Body Requirements:
+Request:
 {
-    email: [optional]
-    username: [optional]
-    nonceHash: [required]
-    clientNonce: [required]
+    email: str [optional]
+    username: str [optional]
+    nonceHash: bytes [required]
+    clientNonce: bytes [required]
+}
+Response:
+{
+    message: str
+    auth_token: str
 }
 """
 sign_in = Blueprint('sign_in', __name__)
-@sign_in.route('/sign_in')
+@sign_in.route('/sign_in', methods = ['POST'])
 def sign_in_route():
-    pass
+    req_body = request.form
+    if not req_body:
+        return make_response('Request Error: No request body provided.', 400)
+
+    # Create reqeust object
+    try:
+        authenticationRequest = NonceHashAuthenticationRequest.fromHttpRequestBody(req_body)
+    except Exception as e:
+        return make_response(e, 400)
+
+    # Execute request and get response
+    authenticationResponse = SignInService.executeNonceHashAuthenticationRequest(authenticationRequest)
+    res = authenticationResponse.toFlaskResponse()
+
+    return res
 
 sign_up = Blueprint('sign_up', __name__)
 @sign_up.route('/sign_up', methods=['POST'])
