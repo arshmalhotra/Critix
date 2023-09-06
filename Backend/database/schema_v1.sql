@@ -1,10 +1,10 @@
-CREATE TABLE `Follows` (
+CREATE TABLE [IF NOT EXISTS] `Follows` (
   `userId` integer,
   `followingId` integer,
   `created_at` timestamp
 );
 
-CREATE TABLE `Users` (
+CREATE TABLE [IF NOT EXISTS] `Users` (
   `userId` integer PRIMARY KEY,
   `username` varchar(255),
   `email` varchar(255),
@@ -12,23 +12,23 @@ CREATE TABLE `Users` (
   `created_at` timestamp
 );
 
-CREATE TABLE `Ratings` (
-  `ratingId` integer PRIMARY KEY,
+CREATE TABLE [IF NOT EXISTS] `Activities` (
+  `activityId` integer PRIMARY KEY,
   `movieId` integer,
-  `rating` decimal(2,1),
+  `rating` NULL decimal(2,1),
   `userId` integer,
   `created_at` timestamp
 );
 
-CREATE TABLE `Movies` (
+CREATE TABLE [IF NOT EXISTS] `Movies` (
   `movieId` integer PRIMARY KEY,
   `title` varchar(255),
   `genre` varchar(255)
 );
 
-ALTER TABLE `Ratings` ADD FOREIGN KEY (`userId`) REFERENCES `Users` (`userId`);
+ALTER TABLE `Rankings` ADD FOREIGN KEY (`userId`) REFERENCES `Users` (`userId`);
 
-ALTER TABLE `Ratings` ADD FOREIGN KEY (`movieId`) REFERENCES `Movies` (`movieId`);
+ALTER TABLE `Rankings` ADD FOREIGN KEY (`movieId`) REFERENCES `Movies` (`movieId`);
 
 ALTER TABLE `Follows` ADD FOREIGN KEY (`userId`) REFERENCES `Users` (`userId`);
 
