@@ -17,3 +17,13 @@ def sign_up_route():
     except Exception as e:
         res_body = {'Message': repr(e)}
         return res_body, 500
+
+@sign_up.route('/sign_up/check_valid_email', methods=['POST'])
+def check_valid_email_route():
+    try:
+        data = request.get_json()
+        temp = sign_up_service.SignUpService(data)
+        res_body = {'message': temp.check_email()[0]}
+        return res_body, temp
+    except Exception as e:
+        return {'Message': repr(e)}, 500
