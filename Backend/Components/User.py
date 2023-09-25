@@ -1,9 +1,11 @@
 from __future__ import annotations
+import bcrypt
+import jwt
 
 class User:
 
     def __init__(self,
-        userId: int, email: str = None, username: str = None,
+        userId: int = None, email: str = None, username: str = None,
         phoneNumber: str = None, passwordHash: bytes = None,
         passwordSalt: bytes = None, profilePicture: dict = dict()
     ):
@@ -14,6 +16,7 @@ class User:
         self.__passwordHash = passwordHash
         self.__passwordSalt = passwordSalt
         self.__profilePicture = profilePicture
+        self.__temporaryNonce = None
 
     @classmethod
     def fromGetSignInChallengeRequest(
@@ -28,6 +31,10 @@ class User:
 
     def getUserId(self) -> int:
         return self.__userId
+
+    def setUserId(self, userId: int) -> User:
+        self.__userId = userId
+        return self
 
     def getEmail(self) -> str:
         return self.__email
@@ -56,7 +63,9 @@ class User:
             'passwordSalt': self.__passwordSalt
         }
 
-    def setPasswordHash(self, passwordHash: bytes, passwordSalt: bytes) -> User:
+    def setPasswordHash(self, passwordHash: bytes = None,
+        passwordSalt: bytes = None
+    ) -> User:
         if not (passwordHash or passwordSalt):
             raise ValueError('Requires at least one paramater')
         self.__passwordHash = passwordHash
@@ -69,3 +78,48 @@ class User:
     def setProfilePicture(self, profilePicture: dict) -> User:
         self.__profilePicture = profilePicture
         return self
+
+    def getTemporaryNonce(self) -> bytes:
+        return self.__temporaryNonce
+
+    def setTemporaryNonce(self, serverNonce: bytes) -> User:
+        self.__temporaryNonce = serverNonce
+        return self
+
+    def createNonceHash(self, clientNonce: bytes) -> bytes:
+        if self.__passwordHash == None:
+            raise ValueError('No password hash found.')
+        if self.__temporaryNonce == None:
+            raise ValueError('No server nonce found.')
+        if clientNonce == None:
+            raise ValueError('No client nonce found.')
+        combination = self.__temporaryNonce + self.__passwordHash + clientNonce
+        serverNonceHash = bcrypt.kdf(
+            password=combination,
+            salt=b'nonce_hash', # TODO replace with app.config.get('SECRET_KEY')
+            desired_key_bytes=64,
+            rounds=100
+        )
+        return serverNonceHash
+
+    def encodeAuthToken(self) -> str:
+        if self.__userId == None:
+            raise ValueError('No user ID found.')
+
+        payload = {
+            'uid': self.__userId
+        }
+        return jwt.encode(
+            payload,
+            'auth_token_key' # app.config.get('SECRET_KEY'),
+        )
+
+    def decodeAuthToken(self, authToken) -> str:
+        if self.__userId == None:
+            raise ValueError('No user ID found.')
+
+        payload = jwt.decode(
+            auth_token,
+            'auth_token_key' # app.config.get('SECRET_KEY')
+        )
+        return payload['uid']
