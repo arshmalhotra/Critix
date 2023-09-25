@@ -1,7 +1,7 @@
 from __future__ import annotations
-from flask import make_response, Response
+from flask import make_response, Response, jsonify
 
-from Components.Authentication.SignIn import SignInRequest, SignInResponse
+from components.authentication.sign_in import SignInRequest, SignInResponse
 
 class GetSignInChallengeRequest:
 
@@ -26,12 +26,20 @@ class GetSignInChallengeRequest:
     def isValid(self) -> bool:
         return self.__email != None or self.__username != None
 
+    def getEmail(self) -> str:
+        return self.__email
+
+    def getUsername(self) -> str:
+        return self.__username
+
 class GetSignInChallengeResponse(SignInResponse):
 
     def __init__(self, salt: bytes = None, nonce: bytes = None):
         super().__init__()
         self.__salt = salt
         self.__nonce = nonce
+        self.__message = 'Internal Server Error'
+        self.__statusCode = 500
 
     def isValid(self) -> bool:
         return self.__salt != None and self.__nonce != None
@@ -50,10 +58,18 @@ class GetSignInChallengeResponse(SignInResponse):
         self.__nonce = nonce
         return self
 
+    def setMessage(self, message: str) -> GetSignInChallengeResponse:
+        self.__message = message
+        return self
+
+    def setStatusCode(self, statusCode: int) -> GetSignInChallengeResponse:
+        self.__statusCode = statusCode
+        return self
+
     def toFlaskResponse(self) -> Response:
         responseBody = {}
         responseBody['message'] = self.__message
-        responseBody['email'] = self.__email
-        responseBody['username'] = self.__username
+        responseBody['nonce'] = '' if not self.__nonce else self.__nonce.decode()
+        responseBody['salt'] = '' if not self.__salt else self.__salt.decode()
 
-        return make_response(jsonify(responseBody), self.__statuscode)
+        return make_response(jsonify(responseBody), self.__statusCode)

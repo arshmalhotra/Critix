@@ -1,10 +1,11 @@
 from __future__ import annotations
+import bcrypt
 import jwt
 
 class User:
 
     def __init__(self,
-        userId: int, email: str = None, username: str = None,
+        userId: int = None, email: str = None, username: str = None,
         phoneNumber: str = None, passwordHash: bytes = None,
         passwordSalt: bytes = None, profilePicture: dict = dict()
     ):
@@ -62,7 +63,9 @@ class User:
             'passwordSalt': self.__passwordSalt
         }
 
-    def setPasswordHash(self, passwordHash: bytes, passwordSalt: bytes) -> User:
+    def setPasswordHash(self, passwordHash: bytes = None,
+        passwordSalt: bytes = None
+    ) -> User:
         if not (passwordHash or passwordSalt):
             raise ValueError('Requires at least one paramater')
         self.__passwordHash = passwordHash
@@ -90,7 +93,7 @@ class User:
             raise ValueError('No server nonce found.')
         if clientNonce == None:
             raise ValueError('No client nonce found.')
-        combination = self.__temporaryNonce + self.__passwordHash + self.clientNonce
+        combination = self.__temporaryNonce + self.__passwordHash + clientNonce
         serverNonceHash = bcrypt.kdf(
             password=combination,
             salt=b'nonce_hash', # TODO replace with app.config.get('SECRET_KEY')

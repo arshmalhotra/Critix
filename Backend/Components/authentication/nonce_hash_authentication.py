@@ -1,7 +1,7 @@
 from __future__ import annotations
-from flask import make_response, Response
+from flask import make_response, Response, jsonify
 
-from Components.Authentication.SignIn import SignInRequest, SignInResponse
+from components.authentication.sign_in import SignInRequest, SignInResponse
 
 class NonceHashAuthenticationRequest(SignInRequest):
 
@@ -27,17 +27,22 @@ class NonceHashAuthenticationRequest(SignInRequest):
         if email == None and username == None:
             raise ValueError("No values found for email or username.")
 
-        nonceHash = body.get('nonce_hash')
-        if not isinstance(nonceHash, bytes):
+        nonceHash = body.get('nonceHash')
+        if not isinstance(nonceHash, str):
             raise TypeError(
                 "Unsupported type for nonce hash: {}".format(type(nonceHash))
             )
-        clientNonce = body.get('client_nonce')
-        if not isinstance(clientNonce, bytes):
+
+        clientNonce = body.get('clientNonce')
+        if not isinstance(clientNonce, str):
             raise TypeError(
                 "Unsupported type for client nonce: {}".format(type(clientNonce))
             )
-        return cls(email, username, nonceHash, clientNonce)
+
+        encodedNonceHash = nonceHash.encode().decode('unicode_escape').encode('raw_unicode_escape')
+        encodedClientNonce = clientNonce.encode().decode('unicode_escape').encode('raw_unicode_escape')
+
+        return cls(email, username, encodedNonceHash, encodedClientNonce)
 
     def getNonceHash(self) -> bytes:
         return self.__nonceHash
@@ -50,6 +55,8 @@ class NonceHashAuthenticationResponse(SignInResponse):
     def __init__(self):
         super().__init__()
         self.__authToken = None
+        self.__message = 'Internal Server Error'
+        self.__statusCode = 500
 
     def getAuthToken(self) -> str:
         return self.__authToken
@@ -58,9 +65,17 @@ class NonceHashAuthenticationResponse(SignInResponse):
         self.__authToken = authToken
         return self
 
+    def setMessage(self, message: str) -> NonceHashAuthenticationResponse:
+        self.__message = message
+        return self
+
+    def setStatusCode(self, statusCode: int) -> NonceHashAuthenticationResponse:
+        self.__statusCode = statusCode
+        return self
+
     def toFlaskResponse(self) -> Response:
         responseBody = {}
         responseBody['message'] = self.__message
         responseBody['authToken'] = self.__authToken
 
-        return make_response(jsonify(responseBody), self.__statuscode)
+        return make_response(jsonify(responseBody), self.__statusCode)

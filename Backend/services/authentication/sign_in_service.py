@@ -1,9 +1,10 @@
 import os
 import base64
 
-from Components.Authentication.GetSignInChallenge import GetSignInChallengeRequest, GetSignInChallengeResponse
-from Components.Authentication.NonceHashAuthentication import NonceHashAuthenticationRequest, NonceHashAuthenticationResponse
-from database.connector import getUserSpecificSalt, storeTemporaryNonce, getTemporaryNonce, getUserPasswordHash, getUserId
+from components.user import User
+from components.authentication.get_sign_in_challenge import GetSignInChallengeRequest, GetSignInChallengeResponse
+from components.authentication.nonce_hash_authentication import NonceHashAuthenticationRequest, NonceHashAuthenticationResponse
+from database.queries import getUserSpecificSalt, storeTemporaryNonce, getTemporaryNonce, getUserPasswordHash, getUserId
 
 class SignInService:
 
@@ -21,23 +22,24 @@ class SignInService:
                 getUserSpecificSalt(user)
             except Exception as e:
                 print(e, "No user was found.")
-                response.setMessage(e)
-                response.setStatusCode(404)
+                response.setMessage(str(e)).setStatusCode(404)
             else:
-                response.setPasswordSalt(user.getPasswordSalt()) # TODO might need conversion
-                serverNonce = __generateServerNonce()
-                response.setNonce(serverNonce)
+                response.setPasswordSalt(
+                    user.getPasswordDetails()['passwordSalt']
+                )
+                serverNonce = cls.__generateServerNonce()
+                response.setNonce(serverNonce
+                        ).setMessage('Success: Retrieved salt and nonce.'
+                        ).setStatusCode(200)
                 user.setTemporaryNonce(serverNonce)
                 try:
                     storeTemporaryNonce(user)
                 except Exception as e:
                     print('Not able to store nonce.')
-                    response.setMessage(e)
-                    response.setStatusCode(500)
+                    response.setMessage(str(e)).setStatusCode(500)
         except Exception as e:
             print(e, "Error converting GetSignInChallengeRequest to User.")
-            response.setMessage(e)
-            response.setStatusCode(400)
+            response.setMessage(str(e)).setStatusCode(400)
         finally:
             return response
 
@@ -60,34 +62,30 @@ class SignInService:
         try:
             serverNonceHash = user.createNonceHash(request.getClientNonce())
             if serverNonceHash != request.getNonceHash():
-                response.setMessage('Invalid credentials.')
-                response.setStatusCode(401)
+                response.setMessage('Invalid credentials.').setStatusCode(401)
             else:
                 # get user id
                 try:
                     getUserId(user)
                 except ValueError as ve:
                     print(e, "Error retrieving user ID.")
-                    response.setMessage(ve)
-                    response.setStatusCode(404)
-                except pymysql.InternalError as ie:
+                    response.setMessage(str(ve)).setStatusCode(404)
+                except mysql.connector.errors.InternalError as ie:
                     print(e, "Error retrieving user ID.")
-                    response.setMessage(ie)
-                    response.setStatusCode(500)
+                    response.setMessage(str(ie)).setStatusCode(500)
                 # auth token
                 try:
                     authToken = user.encodeAuthToken()
-                    response.setAuthToken(authToken)
+                    response.setAuthToken(authToken
+                            ).setMessage('Success: Retrieved auth token.'
+                            ).setStatusCode(200)
                 except ValueError as ve:
                     print(e, "Error encoding auth token.")
-                    response.setMessage(ve)
-                    response.setStatusCode(404)
+                    response.setMessage(str(ve)).setStatusCode(404)
                 except Exception as e:
-                    response.setMessage(e)
-                    response.setStatusCode(500)
+                    response.setMessage(str(e)).setStatusCode(500)
         except ValueError as e:
             print(e, "Error recreating nonce hash.")
-            response.setMessage(e)
-            response.setStatusCode(500)
+            response.setMessage(str(e)).setStatusCode(500)
         finally:
             return response
