@@ -2,6 +2,7 @@ from flask import Flask
 from routes import auth
 
 app = Flask(__name__)
+app.register_blueprint(auth.get_sign_in_challenge)
 app.register_blueprint(auth.sign_in)
 app.register_blueprint(auth.sign_up)
 
