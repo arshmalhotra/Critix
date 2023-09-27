@@ -23,6 +23,13 @@ connection_pool = ConnectionPool(**config)
 ##############
 # Query verification methods
 ##############
+def _verify_no_user_found(conn: Any, cursor: Any, args: Tuple[Any]) -> None:
+    rows = cursor.rowcount
+    if rows == 1:
+        raise ValueError(f'User was found for: {args}')
+    if rows > 1:
+        raise DatabaseError(f'Too many users found for: {args}')
+
 def _verify_single_user_found(conn: Any, cursor: Any, args: Tuple[Any]) -> None:
     rows = cursor.rowcount
     if rows == 0:
@@ -41,9 +48,34 @@ def _verify_single_update(conn, cursor, args):
 # Query methods
 ##############
 
-def getUserId(user: User) -> None:
+def validateNewUser(user: User) -> None:
     sql = '''
         SELECT `user_id`
+        FROM `Users`
+        WHERE `email`=%s OR `username`=%s OR `phone_number`=%s
+    '''
+    params = (user.getEmail(), user.getUsername(), user.getPhoneNumber())
+    result = connection_pool.execute(sql,
+                                     args=params,
+                                     verify_rows=_verify_no_user_found)
+
+def createNewUser(user: User) -> None:
+    sql = '''
+        INSERT INTO `Users`
+        (`username`, `email`, `password_hash`, `password_salt`, `phone_number`, `name`, `profile_picture`)
+        VALUES (%(username)s, %(email)s, %(passwordHash)s, %(passwordSalt)s, %(phoneNumber)s, %(name)s, %(profilePicture)s)
+    '''
+    params = {attr.split('__', 1)[1]: val for attr, val in user.__dict__.items()}
+    result = connection_pool.execute(sql,
+                                     args=params,
+                                     commit=True,
+                                     verify_rows=_verify_single_update)
+    # result provides user_id on successful insert
+    user.setUserId(result)
+
+def getFullUser(user: User) -> None:
+    sql = '''
+        SELECT *
         FROM `Users`
         WHERE `email`=%s OR `username`=%s
     '''
@@ -52,8 +84,21 @@ def getUserId(user: User) -> None:
                                      args=params,
                                      verify_rows=_verify_single_user_found)
 
-    userId = _get_first_from_result(result)
-    user.setUserId(userId)
+    row = result[0]
+    user.setUserId(
+            row[0]
+        ).setUsername(
+            row[1]
+        ).setEmail(
+            row[2]
+        ).setPasswordHash(
+            _rencode_byte_result(row[3]),
+            _rencode_byte_result(row[4])
+        ).setPhoneNumber(
+            row[5]
+        ).setName(
+            row[6]
+        )
 
 def getUserPasswordHash(user: User) -> None:
     sql = '''
@@ -67,8 +112,7 @@ def getUserPasswordHash(user: User) -> None:
                                      verify_rows=_verify_single_user_found)
     # fetches first result
     # modify if need to parse
-    passwordHash = _get_first_from_result(result).decode(
-                                                ).encode('raw_unicode_escape')
+    passwordHash = _rencode_byte_result(result[0][0])
     user.setPasswordHash(passwordHash=passwordHash)
 
 def getUserSpecificSalt(user: User) -> None:
@@ -82,9 +126,7 @@ def getUserSpecificSalt(user: User) -> None:
                                      args=params,
                                      verify_rows=_verify_single_user_found)
 
-    passwordSalt = _get_first_from_result(result).decode(
-                                                ).encode('raw_unicode_escape')
-    print(passwordSalt)
+    passwordSalt = _rencode_byte_result(result[0][0])
     user.setPasswordHash(passwordSalt=passwordSalt)
 
 def storeTemporaryNonce(user: User) -> None:
@@ -111,8 +153,7 @@ def getTemporaryNonce(user: User) -> None:
                                      verify_rows=_verify_single_user_found)
     # fetches first result
     # modify if need to parse
-    serverNonce = _get_first_from_result(result).decode(
-                                               ).encode('raw_unicode_escape')
+    serverNonce = _rencode_byte_result(result[0][0])
 
     # Delete server nonce from database
     user.setTemporaryNonce(None)
@@ -124,5 +165,5 @@ def getTemporaryNonce(user: User) -> None:
 ##############
 # Helper methods
 ##############
-def _get_first_from_result(result: Any) -> Any:
-    return result[0][0]
+def _rencode_byte_result(result: Any) -> Any:
+    return result.decode().encode('raw_unicode_escape')

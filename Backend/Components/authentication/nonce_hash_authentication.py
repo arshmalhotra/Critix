@@ -2,6 +2,7 @@ from __future__ import annotations
 from flask import make_response, Response, jsonify
 
 from components.authentication.sign_in import SignInRequest, SignInResponse
+from components.user import User
 
 class NonceHashAuthenticationRequest(SignInRequest):
 
@@ -39,8 +40,8 @@ class NonceHashAuthenticationRequest(SignInRequest):
                 "Unsupported type for client nonce: {}".format(type(clientNonce))
             )
 
-        encodedNonceHash = nonceHash.encode().decode('unicode_escape').encode('raw_unicode_escape')
-        encodedClientNonce = clientNonce.encode().decode('unicode_escape').encode('raw_unicode_escape')
+        encodedNonceHash = User.cleanJsonBytes(nonceHash)
+        encodedClientNonce = User.cleanJsonBytes(clientNonce)
 
         return cls(email, username, encodedNonceHash, encodedClientNonce)
 

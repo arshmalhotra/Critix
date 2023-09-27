@@ -77,7 +77,7 @@ class ConnectionPool(object):
         result = None
         if commit is True:
             conn.commit()
-            result = cursor.statement
+            result = cursor.lastrowid
         else:
             result = cursor.fetchall()
 
