@@ -6,6 +6,7 @@ node_modules/
 
 *.pyc
 __pycache__/
+/Backend/database/db_config.json
 
 instance/
 
