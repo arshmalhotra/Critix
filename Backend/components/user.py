@@ -1,5 +1,6 @@
 from __future__ import annotations
 import bcrypt
+from typing import Tuple, Any
 import jwt
 
 class User:
@@ -7,7 +8,7 @@ class User:
     def __init__(self,
         userId: int = None, email: str = None, username: str = None,
         phoneNumber: str = None, passwordHash: bytes = None,
-        passwordSalt: bytes = None, profilePicture: dict = dict()
+        passwordSalt: bytes = None, name: str = '', profilePicture: str = ''
     ):
         self.__userId = userId
         self.__email = email
@@ -15,6 +16,7 @@ class User:
         self.__phoneNumber = phoneNumber
         self.__passwordHash = passwordHash
         self.__passwordSalt = passwordSalt
+        self.__name = name
         self.__profilePicture = profilePicture
         self.__temporaryNonce = None
 
@@ -68,14 +70,21 @@ class User:
     ) -> User:
         if not (passwordHash or passwordSalt):
             raise ValueError('Requires at least one paramater')
-        self.__passwordHash = passwordHash
-        self.__passwordSalt = passwordSalt
+        self.__passwordHash = passwordHash or self.__passwordHash
+        self.__passwordSalt = passwordSalt or self.__passwordSalt
         return self
 
-    def getProfilePicture(self) -> dict:
+    def getName(self) -> str:
+        return self.__name
+
+    def setName(self, name: str = '') -> User:
+        self.__name = name
+        return self
+
+    def getProfilePicture(self) -> str:
         return self.__profilePicture
 
-    def setProfilePicture(self, profilePicture: dict) -> User:
+    def setProfilePicture(self, profilePicture: str) -> User:
         self.__profilePicture = profilePicture
         return self
 
@@ -107,14 +116,20 @@ class User:
             raise ValueError('No user ID found.')
 
         payload = {
-            'uid': self.__userId
+            'uid': self.__userId,
+            'email': self.__email,
+            'user': self.__username,
+            'phone': self.__phoneNumber,
+            'hash': self.__passwordHash,
+            'salt': self.__passwordSalt,
+            'name': self.__name
         }
         return jwt.encode(
             payload,
             'auth_token_key' # app.config.get('SECRET_KEY'),
         )
 
-    def decodeAuthToken(self, authToken) -> str:
+    def decodeAuthToken(self, authToken) -> User:
         if self.__userId == None:
             raise ValueError('No user ID found.')
 
@@ -122,4 +137,8 @@ class User:
             auth_token,
             'auth_token_key' # app.config.get('SECRET_KEY')
         )
-        return payload['uid']
+        return User(**payload)
+
+    @classmethod
+    def cleanJsonBytes(cls, jsonByteString: str) -> bytes:
+        return jsonByteString.encode().decode('unicode_escape').encode('raw_unicode_escape')

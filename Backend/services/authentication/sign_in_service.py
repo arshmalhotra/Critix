@@ -4,7 +4,7 @@ import base64
 from components.user import User
 from components.authentication.get_sign_in_challenge import GetSignInChallengeRequest, GetSignInChallengeResponse
 from components.authentication.nonce_hash_authentication import NonceHashAuthenticationRequest, NonceHashAuthenticationResponse
-from database.queries import getUserSpecificSalt, storeTemporaryNonce, getTemporaryNonce, getUserPasswordHash, getUserId
+import database.queries as dbQueries
 
 class SignInService:
 
@@ -19,10 +19,10 @@ class SignInService:
         try:
             user = User.fromGetSignInChallengeRequest(request)
             try:
-                getUserSpecificSalt(user)
+                dbQueries.getUserSpecificSalt(user)
             except Exception as e:
                 print(e, "No user was found.")
-                response.setMessage(str(e)).setStatusCode(404)
+                response.setMessage(repr(e)).setStatusCode(404)
             else:
                 response.setPasswordSalt(
                     user.getPasswordDetails()['passwordSalt']
@@ -33,13 +33,13 @@ class SignInService:
                         ).setStatusCode(200)
                 user.setTemporaryNonce(serverNonce)
                 try:
-                    storeTemporaryNonce(user)
+                    dbQueries.storeTemporaryNonce(user)
                 except Exception as e:
                     print('Not able to store nonce.')
-                    response.setMessage(str(e)).setStatusCode(500)
+                    response.setMessage(repr(e)).setStatusCode(500)
         except Exception as e:
             print(e, "Error converting GetSignInChallengeRequest to User.")
-            response.setMessage(str(e)).setStatusCode(400)
+            response.setMessage(repr(e)).setStatusCode(400)
         finally:
             return response
 
@@ -55,9 +55,9 @@ class SignInService:
 
         user = User(email=request.getEmail(), username=request.getUsername())
         # Get password hash from database
-        getUserPasswordHash(user)
+        dbQueries.getUserPasswordHash(user)
         # Get server nonce from database (auto deletes)
-        getTemporaryNonce(user)
+        dbQueries.getTemporaryNonce(user)
         # hash(server nonce + password hash + client nonce), compare
         try:
             serverNonceHash = user.createNonceHash(request.getClientNonce())
@@ -66,13 +66,13 @@ class SignInService:
             else:
                 # get user id
                 try:
-                    getUserId(user)
+                    dbQueries.getFullUser(user)
                 except ValueError as ve:
-                    print(e, "Error retrieving user ID.")
-                    response.setMessage(str(ve)).setStatusCode(404)
+                    print(e, "No user found.")
+                    response.setMessage(repr(ve)).setStatusCode(404)
                 except mysql.connector.errors.InternalError as ie:
-                    print(e, "Error retrieving user ID.")
-                    response.setMessage(str(ie)).setStatusCode(500)
+                    print(e, "Too many users found.")
+                    response.setMessage(repr(ie)).setStatusCode(500)
                 # auth token
                 try:
                     authToken = user.encodeAuthToken()
@@ -81,11 +81,11 @@ class SignInService:
                             ).setStatusCode(200)
                 except ValueError as ve:
                     print(e, "Error encoding auth token.")
-                    response.setMessage(str(ve)).setStatusCode(404)
+                    response.setMessage(repr(ve)).setStatusCode(404)
                 except Exception as e:
-                    response.setMessage(str(e)).setStatusCode(500)
+                    response.setMessage(repr(e)).setStatusCode(500)
         except ValueError as e:
             print(e, "Error recreating nonce hash.")
-            response.setMessage(str(e)).setStatusCode(500)
+            response.setMessage(repr(e)).setStatusCode(500)
         finally:
             return response
