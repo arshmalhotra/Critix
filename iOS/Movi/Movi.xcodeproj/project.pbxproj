@@ -7,12 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		600940B32AC39F9000340A60 /* AppTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600940B22AC39F9000340A60 /* AppTitle.swift */; };
+		6068B9A82AC7F8FA00E9AF92 /* PasswordPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6068B9A72AC7F8FA00E9AF92 /* PasswordPage.swift */; };
+		6068B9AA2AC939DC00E9AF92 /* NamePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6068B9A92AC939DB00E9AF92 /* NamePage.swift */; };
+		6068B9AC2AC93BA800E9AF92 /* CreateProfilePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6068B9AB2AC93BA800E9AF92 /* CreateProfilePage.swift */; };
+		60A0245C2AC52882003F0AD8 /* Template.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A0245B2AC52882003F0AD8 /* Template.swift */; };
+		60A024602AC7E649003F0AD8 /* EmailPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A0245F2AC7E649003F0AD8 /* EmailPage.swift */; };
+		60FAEFFA2AC2555300ABCA35 /* SignUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FAEFF92AC2555300ABCA35 /* SignUp.swift */; };
 		FBF0D8642A95C8C000A3B490 /* MoviApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF0D8632A95C8C000A3B490 /* MoviApp.swift */; };
 		FBF0D8662A95C8C000A3B490 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF0D8652A95C8C000A3B490 /* ContentView.swift */; };
 		FBF0D8682A95C8C300A3B490 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FBF0D8672A95C8C300A3B490 /* Assets.xcassets */; };
-		FBF0D86B2A95C8C300A3B490 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FBF0D86A2A95C8C300A3B490 /* Preview Assets.xcassets */; };
-		FBF0D86D2A95C8C300A3B490 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF0D86C2A95C8C300A3B490 /* Persistence.swift */; };
-		FBF0D8702A95C8C300A3B490 /* Movi.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FBF0D86E2A95C8C300A3B490 /* Movi.xcdatamodeld */; };
 		FBF0D87A2A95C8C400A3B490 /* MoviTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF0D8792A95C8C400A3B490 /* MoviTests.swift */; };
 		FBF0D8842A95C8C400A3B490 /* MoviUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF0D8832A95C8C400A3B490 /* MoviUITests.swift */; };
 		FBF0D8862A95C8C400A3B490 /* MoviUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF0D8852A95C8C400A3B490 /* MoviUITestsLaunchTests.swift */; };
@@ -36,13 +40,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		600940B22AC39F9000340A60 /* AppTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTitle.swift; sourceTree = "<group>"; };
+		6068B9A72AC7F8FA00E9AF92 /* PasswordPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordPage.swift; sourceTree = "<group>"; };
+		6068B9A92AC939DB00E9AF92 /* NamePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NamePage.swift; sourceTree = "<group>"; };
+		6068B9AB2AC93BA800E9AF92 /* CreateProfilePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateProfilePage.swift; sourceTree = "<group>"; };
+		60A0245B2AC52882003F0AD8 /* Template.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Template.swift; sourceTree = "<group>"; };
+		60A0245F2AC7E649003F0AD8 /* EmailPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailPage.swift; sourceTree = "<group>"; };
+		60FAEFF92AC2555300ABCA35 /* SignUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUp.swift; sourceTree = "<group>"; };
 		FBF0D8602A95C8C000A3B490 /* Movi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Movi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FBF0D8632A95C8C000A3B490 /* MoviApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoviApp.swift; sourceTree = "<group>"; };
 		FBF0D8652A95C8C000A3B490 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		FBF0D8672A95C8C300A3B490 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		FBF0D86A2A95C8C300A3B490 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		FBF0D86C2A95C8C300A3B490 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
-		FBF0D86F2A95C8C300A3B490 /* Movi.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Movi.xcdatamodel; sourceTree = "<group>"; };
 		FBF0D8752A95C8C400A3B490 /* MoviTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MoviTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FBF0D8792A95C8C400A3B490 /* MoviTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoviTests.swift; sourceTree = "<group>"; };
 		FBF0D87F2A95C8C400A3B490 /* MoviUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MoviUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -101,19 +109,15 @@
 				FBF0D8632A95C8C000A3B490 /* MoviApp.swift */,
 				FBF0D8652A95C8C000A3B490 /* ContentView.swift */,
 				FBF0D8672A95C8C300A3B490 /* Assets.xcassets */,
-				FBF0D86C2A95C8C300A3B490 /* Persistence.swift */,
-				FBF0D86E2A95C8C300A3B490 /* Movi.xcdatamodeld */,
-				FBF0D8692A95C8C300A3B490 /* Preview Content */,
+				60FAEFF92AC2555300ABCA35 /* SignUp.swift */,
+				600940B22AC39F9000340A60 /* AppTitle.swift */,
+				60A0245B2AC52882003F0AD8 /* Template.swift */,
+				60A0245F2AC7E649003F0AD8 /* EmailPage.swift */,
+				6068B9A72AC7F8FA00E9AF92 /* PasswordPage.swift */,
+				6068B9A92AC939DB00E9AF92 /* NamePage.swift */,
+				6068B9AB2AC93BA800E9AF92 /* CreateProfilePage.swift */,
 			);
 			path = Movi;
-			sourceTree = "<group>";
-		};
-		FBF0D8692A95C8C300A3B490 /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-				FBF0D86A2A95C8C300A3B490 /* Preview Assets.xcassets */,
-			);
-			path = "Preview Content";
 			sourceTree = "<group>";
 		};
 		FBF0D8782A95C8C400A3B490 /* MoviTests */ = {
@@ -237,7 +241,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FBF0D86B2A95C8C300A3B490 /* Preview Assets.xcassets in Resources */,
 				FBF0D8682A95C8C300A3B490 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -263,10 +266,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FBF0D8702A95C8C300A3B490 /* Movi.xcdatamodeld in Sources */,
-				FBF0D86D2A95C8C300A3B490 /* Persistence.swift in Sources */,
 				FBF0D8662A95C8C000A3B490 /* ContentView.swift in Sources */,
+				60A024602AC7E649003F0AD8 /* EmailPage.swift in Sources */,
+				6068B9AC2AC93BA800E9AF92 /* CreateProfilePage.swift in Sources */,
+				60FAEFFA2AC2555300ABCA35 /* SignUp.swift in Sources */,
+				6068B9AA2AC939DC00E9AF92 /* NamePage.swift in Sources */,
 				FBF0D8642A95C8C000A3B490 /* MoviApp.swift in Sources */,
+				60A0245C2AC52882003F0AD8 /* Template.swift in Sources */,
+				6068B9A82AC7F8FA00E9AF92 /* PasswordPage.swift in Sources */,
+				600940B32AC39F9000340A60 /* AppTitle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -591,19 +599,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCVersionGroup section */
-		FBF0D86E2A95C8C300A3B490 /* Movi.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				FBF0D86F2A95C8C300A3B490 /* Movi.xcdatamodel */,
-			);
-			currentVersion = FBF0D86F2A95C8C300A3B490 /* Movi.xcdatamodel */;
-			path = Movi.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = FBF0D8582A95C8C000A3B490 /* Project object */;
 }

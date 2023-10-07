@@ -1,88 +1,91 @@
-//
-//  ContentView.swift
-//  Movi
-//
-//  Created by Arsh Malhotra on 8/22/23.
-//
-
 import SwiftUI
-import CoreData
 
-struct ContentView: View {
-    @Environment(\.managedObjectContext) private var viewContext
+struct GrowingButton: ButtonStyle {
+    let backgroundColor: Color
+    let borderWidth: CGFloat
 
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
-        animation: .default)
-    private var items: FetchedResults<Item>
-
-    var body: some View {
-        NavigationView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp!, formatter: itemFormatter)")
-                    } label: {
-                        Text(item.timestamp!, formatter: itemFormatter)
-                    }
-                }
-                .onDelete(perform: deleteItems)
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-            }
-            Text("Select an item")
-        }
+    init(backgroundColor: Color, borderWidth: CGFloat) {
+        self.backgroundColor = backgroundColor
+        self.borderWidth = borderWidth
     }
 
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
-
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            offsets.map { items[$0] }.forEach(viewContext.delete)
-
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
-        }
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .padding()
+            .frame(width: 350)
+            .background(backgroundColor)
+            .overlay(RoundedRectangle(cornerRadius: 5)
+                        .stroke(Color.white, lineWidth: borderWidth)
+                    )
+            .foregroundStyle(.white)
+            .clipShape(RoundedRectangle(cornerSize: CGSize(width: 5, height: 10)))
+            .scaleEffect(configuration.isPressed ? 1.2 : 1)
+            .animation(.easeOut(duration: 0.2), value: configuration.isPressed)
     }
 }
 
-private let itemFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .short
-    formatter.timeStyle = .medium
-    return formatter
-}()
+//extension Color {
+//    init(hex: UInt) {
+//        let red = Double((hex >> 16) & 0xFF) / 255.0
+//        let green = Double((hex >> 8) & 0xFF) / 255.0
+//        let blue = Double(hex & 0xFF) / 255.0
+//        self.init(red: red, green: green, blue: blue)
+//    }
+//}
 
-struct ContentView_Previews: PreviewProvider {
+struct App_Title: View {
+    var body: some View {
+        NavigationStack{
+            ZStack{
+                Color(hex: 0x141D26)
+                    .ignoresSafeArea()
+                Image("Spotlight")
+                    .resizable()
+                    .aspectRatio(contentMode: /*@START_MENU_TOKEN@*/.fit/*@END_MENU_TOKEN@*/)
+                    .edgesIgnoringSafeArea(.top)
+                    .position(x: UIScreen.main.bounds.width / 2, y: 60)
+                // maybe change offset amounts to .position and use UIscreen bounds like ^
+                VStack{
+                    Image("Home_logo")
+                        .resizable()
+                        .aspectRatio(contentMode: /*@START_MENU_TOKEN@*/.fit/*@END_MENU_TOKEN@*/)
+                        .padding(.all, 50.0)
+                        .offset(x: 0, y: -100)
+                    Text("Critix")
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .foregroundColor(Color.white)
+                        .multilineTextAlignment(.center)
+                        .offset(x:0, y: -110)
+                    
+                    NavigationLink(destination: SignUp(), label: {
+                        Button("Create Account"){}
+                        .buttonStyle(GrowingButton(backgroundColor: Color(hex: 0xF04650), borderWidth:  CGFloat(0)))
+                        .position(x:50, y:100)
+                        .background(.blue)
+                    })
+                        
+                        
+                    
+
+                    NavigationLink(destination: SignUp()){
+                        Button("I already have an account") {
+                        }
+                        .buttonStyle(GrowingButton(backgroundColor: Color(hex: 0x141D26), borderWidth:  CGFloat(1)))
+//                        .offset(x:0, y: -90)
+                        .background(.green)
+                    }
+                }
+            }
+            
+        }
+        .navigationTitle("Main View")
+        
+    }
+}
+
+struct App_Title_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        App_Title()
     }
 }
