@@ -13,8 +13,9 @@ struct MoviApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            BrowseView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .background(SystemColors.backgroundColor)
         }
     }
 }

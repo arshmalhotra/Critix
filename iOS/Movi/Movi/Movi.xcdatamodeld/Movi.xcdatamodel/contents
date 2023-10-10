@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1" systemVersion="11A491" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="false" userDefinedModelVersionIdentifier="">
-    <entity name="Item" representedClassName="Item" syncable="YES" codeGenerationType="class">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21513" systemVersion="21G115" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="AuthToken" representedClassName="AuthToken" syncable="YES" codeGenerationType="class">
+        <attribute name="token" attributeType="Binary" allowsCloudEncryption="YES"/>
+    </entity>
+    <entity name="Profile" representedClassName="Profile" syncable="YES" codeGenerationType="class">
+        <attribute name="dateJoined" attributeType="Date" allowsCloudEncryption="YES" usesScalarValueType="NO"/>
+        <attribute name="email" attributeType="String" allowsCloudEncryption="YES"/>
+        <attribute name="phoneNumber" attributeType="String" allowsCloudEncryption="YES"/>
+        <attribute name="username" attributeType="String" allowsCloudEncryption="YES"/>
+    </entity>
+    <entity name="RecentSearch" representedClassName="RecentSearch" syncable="YES" codeGenerationType="class">
+        <attribute name="searchText" optional="YES" attributeType="String"/>
         <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
     </entity>
-    <elements>
-        <element name="Item" positionX="-63" positionY="-18" width="128" height="44"/>
-    </elements>
 </model>
