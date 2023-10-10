@@ -10,6 +10,7 @@ import SwiftUI
 struct GenresView: View {
     let genres: [String]
     
+    var spacing: CGFloat = 10
     @State private var totalHeight = CGFloat.zero
     
     var body: some View {
@@ -29,15 +30,15 @@ struct GenresView: View {
             ForEach(self.genres, id: \.self) { genre in
                 GenreTagView(genre: genre)
                     .alignmentGuide(.leading, computeValue: { tag in
-                        if (abs(width - tag.width - 10) > geometry.size.width) {
+                        if (abs(width - tag.width - spacing) > geometry.size.width) {
                             width = 0
-                            height -= (tag.height + 10)
+                            height -= (tag.height + spacing)
                         }
                         let result = width
                         if genre == self.genres.last {
                             width = 0 // last item
                         } else {
-                            width -= (tag.width + 10)
+                            width -= (tag.width + spacing)
                         }
                         return result
                     })
@@ -67,7 +68,29 @@ struct GenresView: View {
 
 struct GenresView_Previews: PreviewProvider {
     static var previews: some View {
-        GenresView(genres: ["Comedy", "Adventure", "Fantasy"])
+        ViewThatFits {
+            GenresView(genres: ["Action",
+                                "Adventure",
+                                "Animation",
+                                "Comedy",
+                                "Crime",
+                                "Documentary",
+                                "Drama",
+                                "Family",
+                                "Fantasy",
+                                "History",
+                                "Horror",
+                                "Music",
+                                "Mystery",
+                                "Romance",
+                                "Science Fiction",
+                                "TV Movie",
+                                "Thriller",
+                                "War",
+                                "Western",
+                                "Speculative Fiction"])
+            .padding(10)
+        }
             .background(SystemColors.backgroundColor)
     }
 }

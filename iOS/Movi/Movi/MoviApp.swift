@@ -14,6 +14,7 @@ struct MoviApp: App {
     var body: some Scene {
         WindowGroup {
             BrowseView()
+                .environment(\.font, Font.inter())
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .background(SystemColors.backgroundColor)
         }

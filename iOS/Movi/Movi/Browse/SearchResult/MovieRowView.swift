@@ -15,8 +15,8 @@ struct MovieRowView: View {
     
     init(searchResultRowVM: MovieRowViewModel) {
         self.searchResultRowVM = searchResultRowVM
-        self.imageHeight = (searchResultRowVM.genres != nil ? 150 : 100)
-        self.imageWidth = self.imageHeight * 3 / 4
+        self.imageHeight = (searchResultRowVM.genres != nil ? 142 : 63)
+        self.imageWidth = self.imageHeight * 2 / 3
     }
     
     var body: some View {
@@ -35,27 +35,29 @@ struct MovieRowView: View {
                     self.imageBackgroundRectangle()
                 }
             }
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 5) {
+                // Title
                 Text(searchResultRowVM.title)
                     .foregroundColor(SystemColors.primaryColor)
-                    .font(.system(size: 18))
-                    .fontWeight(.semibold)
+                    .font(.inter(.semibold, size: 18))
+                
+                // Quick Details
                 HStack {
                     if searchResultRowVM.releaseYear != nil {
                         Text(searchResultRowVM.releaseYear)
                     }
                     if searchResultRowVM.mpaRating != nil {
-                        Text("·")
-                            .fontWeight(.black)
+                        Text("•")
                         Text(searchResultRowVM.mpaRating)
                     }
                     if searchResultRowVM.runtime != nil {
-                        Text("·")
-                            .fontWeight(.black)
+                        Text("•")
                         Text(searchResultRowVM.runtime)
                     }
                 }
                 .foregroundColor(SystemColors.secondaryColor)
+                
+                // Genres
                 if searchResultRowVM.genres != nil {
                     GenresView(genres: searchResultRowVM.genres)
                 }
@@ -75,14 +77,14 @@ struct MovieRowView: View {
 
 struct SearchResultRowView_Previews: PreviewProvider {
     static var previews: some View {
-//        MovieRowView(searchResultRowVM: .constant(MovieRowViewModel(fromTDMBSearch: ["id": 346698,
-//                                                                                     "poster_path": "/iuFNMS8U5cb6xfzi51Dbkovj7vM.jpg",
-//                                                                                     "release_date": "2023-07-19",
-//                                                                                     "title": "Barbie"])!))
-        MovieRowView(searchResultRowVM: MovieRowViewModel(fromTDMBSearch: ["id": 9023,
-                                                                           "poster_path": "/cUgYrz4twiJ3QgVGpRfey984NIB.jpg",
-                                                                           "release_date": "2002-05-24",
-                                                                           "title": "Spirit: Stallion of the Cimarron"])!)
+        MovieRowView(searchResultRowVM: MovieRowViewModel(fromTDMBSearch: ["id": 346698,
+                                                                           "poster_path": "/iuFNMS8U5cb6xfzi51Dbkovj7vM.jpg",
+                                                                           "release_date": "2023-07-19",
+                                                                           "title": "Barbie"])!)
+//        MovieRowView(searchResultRowVM: MovieRowViewModel(fromTDMBSearch: ["id": 9023,
+//                                                                           "poster_path": "/cUgYrz4twiJ3QgVGpRfey984NIB.jpg",
+//                                                                           "release_date": "2002-05-24",
+//                                                                           "title": "Spirit: Stallion of the Cimarron"])!)
         .frame(width: 393, alignment: .leading)
         .background(SystemColors.backgroundColor)
     }

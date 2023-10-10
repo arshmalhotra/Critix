@@ -82,12 +82,6 @@ struct SearchBarView: View {
     }
     
     private func queryTMDBSearch(queryString: String) -> Void {
-        UIFont.familyNames.forEach { fam in
-            print("\n\(fam)")
-            UIFont.fontNames(forFamilyName: fam).forEach { font in
-                print("\(font)")
-            }
-        }
         if queryString.isEmpty {
             searchResults = []
             return
@@ -100,9 +94,11 @@ struct SearchBarView: View {
          * TODO: Make a server call instead which then calls the OMDB API
          */
 //        let apiKey = "a036a667"
+        
+        let escapedQuery = queryString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
 
         let request = NSMutableURLRequest(
-            url: NSURL(string: "https://api.themoviedb.org/3/search/movie?query=\(queryString)&include_adult=false&language=en-US&page=1")! as URL,
+            url: NSURL(string: "https://api.themoviedb.org/3/search/movie?query=\(escapedQuery!)&include_adult=false&language=en-US&page=1")! as URL,
             cachePolicy: .useProtocolCachePolicy,
             timeoutInterval: 10.0)
         request.httpMethod = "GET"
