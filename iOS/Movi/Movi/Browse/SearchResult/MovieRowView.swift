@@ -7,27 +7,48 @@
 
 import SwiftUI
 
+enum MovieRowViewState {
+    case search(imageHeight: CGFloat = 63, titleSize: CGFloat = 18, titleWeight: Font.InterWeight = .semibold, detailsSize: CGFloat = 14)
+    case feed(imageHeight: CGFloat = 144, titleSize: CGFloat = 20, titleWeight: Font.InterWeight = .bold, detailsSize: CGFloat = 16)
+    case detail(imageHeight: CGFloat = 178, titleSize: CGFloat = 24, titleWeight: Font.InterWeight = .bold, detailsSize: CGFloat = 16)
+}
+
 struct MovieRowView: View {
-    let searchResultRowVM: MovieRowViewModel
+    let movieDetailsVM: MovieDetailsModel
     
-    var imageHeight: CGFloat = 100
-    var imageWidth: CGFloat = 75
+    // Defaults set with bigger sizes
+    var imageHeight: CGFloat = 144
+    var imageWidth: CGFloat = 96
     
-    init(searchResultRowVM: MovieRowViewModel) {
-        self.searchResultRowVM = searchResultRowVM
-        self.imageHeight = (searchResultRowVM.genres != nil ? 142 : 63)
+    var titleSize: CGFloat = 20
+    var titleWeight: Font.InterWeight = .bold
+    var quickDetailsSize: CGFloat = 16
+    
+    init(movieDetailsVM: MovieDetailsModel, viewState: MovieRowViewState) {
+        self.movieDetailsVM = movieDetailsVM
+        
+        switch viewState {
+        case .search(let imageHeight, let titleSize, let titleWeight, let detailsSize),
+                .feed(let imageHeight, let titleSize, let titleWeight, let detailsSize),
+                .detail(let imageHeight, let titleSize, let titleWeight, let detailsSize):
+            self.imageHeight = imageHeight
+            self.titleSize = titleSize
+            self.titleWeight = titleWeight
+            self.quickDetailsSize = detailsSize
+        }
+        
         self.imageWidth = self.imageHeight * 2 / 3
     }
     
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
-            AsyncImage(url: URL(string: searchResultRowVM.posterURL)) { phase in
+            AsyncImage(url: URL(string: movieDetailsVM.posterURL)) { phase in
                 switch phase {
                 case .empty:
                     self.imageBackgroundRectangle()
                 case .success(let image):
                     image.resizable()
-                        .aspectRatio(contentMode: .fit)
+//                        .aspectRatio(contentMode: .fit)
                         .frame(maxWidth: self.imageWidth, maxHeight: self.imageHeight)
                 case .failure:
                     self.imageBackgroundRectangle()
@@ -36,35 +57,38 @@ struct MovieRowView: View {
                 }
             }
             VStack(alignment: .leading, spacing: 5) {
-                // Title
-                Text(searchResultRowVM.title)
+                // MARK: Title
+                Text(movieDetailsVM.title)
                     .foregroundColor(SystemColors.primaryColor)
-                    .font(.inter(.semibold, size: 18))
+                    .font(.inter(self.titleWeight, size: self.titleSize))
                 
-                // Quick Details
+                // MARK: Quick Details
                 HStack {
-                    if searchResultRowVM.releaseYear != nil {
-                        Text(searchResultRowVM.releaseYear)
+                    if movieDetailsVM.releaseYear != nil {
+                        Text(movieDetailsVM.releaseYear)
                     }
-                    if searchResultRowVM.mpaRating != nil {
+                    if movieDetailsVM.mpaRating != nil {
                         Text("•")
-                        Text(searchResultRowVM.mpaRating)
+                        Text(movieDetailsVM.mpaRating)
                     }
-                    if searchResultRowVM.runtime != nil {
+                    if movieDetailsVM.runtime != nil {
                         Text("•")
-                        Text(searchResultRowVM.runtime)
+                        Text(movieDetailsVM.runtime)
                     }
                 }
                 .foregroundColor(SystemColors.secondaryColor)
+                .font(.inter(size: self.quickDetailsSize))
                 
-                // Genres
-                if searchResultRowVM.genres != nil {
-                    GenresView(genres: searchResultRowVM.genres)
+                // MARK: Genres
+                if movieDetailsVM.genres != nil {
+                    GenresView(genres: movieDetailsVM.genres)
+                        .padding(.top, 5)
                 }
             }
         }
-        .padding(.horizontal, 10)
+        .padding(.horizontal, 18)
         .padding(.vertical, 5)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
     
     private func imageBackgroundRectangle() -> some View {
@@ -77,15 +101,23 @@ struct MovieRowView: View {
 
 struct SearchResultRowView_Previews: PreviewProvider {
     static var previews: some View {
-        MovieRowView(searchResultRowVM: MovieRowViewModel(fromTDMBSearch: ["id": 346698,
-                                                                           "poster_path": "/iuFNMS8U5cb6xfzi51Dbkovj7vM.jpg",
-                                                                           "release_date": "2023-07-19",
-                                                                           "title": "Barbie"])!)
-//        MovieRowView(searchResultRowVM: MovieRowViewModel(fromTDMBSearch: ["id": 9023,
-//                                                                           "poster_path": "/cUgYrz4twiJ3QgVGpRfey984NIB.jpg",
-//                                                                           "release_date": "2002-05-24",
-//                                                                           "title": "Spirit: Stallion of the Cimarron"])!)
-        .frame(width: 393, alignment: .leading)
+        VStack {
+            Section("Detail View") {
+                MovieRowView(movieDetailsVM: MockMovieDetailsModel.Oppenheimer(.full).detailModel, viewState: .detail())
+                    .border(.white)
+            }
+            Section("Feed View") {
+                MovieRowView(movieDetailsVM: MockMovieDetailsModel.Barbie(.full).detailModel, viewState: .feed())
+                    .border(.white)
+            }
+            Section("Search View") {
+                MovieRowView(movieDetailsVM: MockMovieDetailsModel.SpiritedAway().detailModel, viewState: .search())
+                    .border(.white)
+            }
+        }
+        .padding(.vertical, 5)
+        .foregroundColor(SystemColors.primaryColor)
+        .frame(width: UIScreen.main.bounds.width, alignment: .leading)
         .background(SystemColors.backgroundColor)
     }
 }

@@ -17,6 +17,7 @@ struct MoviApp: App {
                 .environment(\.font, Font.inter())
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .background(SystemColors.backgroundColor)
+                .preferredColorScheme(.dark)
         }
     }
 }

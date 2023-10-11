@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SearchBarView: View {
-    @Binding var searchResults: [MovieRowViewModel]
+    @Binding var searchResults: [MovieDetailsModel]
     
     @StateObject private var movieSearchVM = SearchBarViewModel()
     @FocusState private var searchIsFocused: Bool
@@ -17,14 +17,12 @@ struct SearchBarView: View {
     var body: some View {
         HStack {
             HStack {
+                // MARK: Search bar
                 Image(systemName: "magnifyingglass")
                     .foregroundColor((searchIsFocused ? SystemColors.primaryColor : SystemColors.secondaryColor))
                 TextField("", text: $movieSearchVM.searchText)
-//                    .onReceive(movieSearchVM.$debouncedText) { (dt) in
-//                        debouncedSearchText = dt
-//                    }
                     .focused($searchIsFocused)
-                    .frame(height: 50)
+                    .frame(height: 48)
                     .foregroundColor(SystemColors.primaryColor)
                     .background {
                         ZStack {
@@ -38,7 +36,7 @@ struct SearchBarView: View {
                             }
                         }
                     }
-                
+                // MARK: Remove text button
                 if movieSearchVM.searchText != "" {
                     Button(action: {
                         movieSearchVM.searchText = ""
@@ -62,8 +60,9 @@ struct SearchBarView: View {
                     .stroke(
                         (searchIsFocused ? SystemColors.primaryColor : SystemColors.secondaryColor),
                         lineWidth: 1))
-
-            if showCancelButton {
+            
+            // MARK: Cancel button
+            if showCancelButton || movieSearchVM.searchText != "" {
                 Button("Cancel") {
                     movieSearchVM.searchText = ""
                     searchIsFocused = false
@@ -79,6 +78,11 @@ struct SearchBarView: View {
         })
         .onChange(of: movieSearchVM.debouncedText, perform: queryTMDBSearch)
         .padding(.horizontal, 10)
+        .onAppear {
+            if movieSearchVM.searchText != "" {
+                searchIsFocused = true
+            }
+        }
     }
     
     private func queryTMDBSearch(queryString: String) -> Void {
@@ -86,14 +90,12 @@ struct SearchBarView: View {
             searchResults = []
             return
         }
-        let headers = ["accept": "application/json",
-                       "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOGZmNjNlZDgwOWQ4OTU3ZDBjY2E4YmE4YTU5YzU4NCIsInN1YiI6IjY0ZjZkYjkzYThiMmNhMDEzODRhNzQ1OSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.ynGTfr0GBqlv38DsKPbrBOQayUsAUoBM-Y6-85D2y4A"]
-        
         /**
          * TODO: Move the apikey out of the file
          * TODO: Make a server call instead which then calls the OMDB API
          */
-//        let apiKey = "a036a667"
+        let headers = ["accept": "application/json",
+                       "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOGZmNjNlZDgwOWQ4OTU3ZDBjY2E4YmE4YTU5YzU4NCIsInN1YiI6IjY0ZjZkYjkzYThiMmNhMDEzODRhNzQ1OSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.ynGTfr0GBqlv38DsKPbrBOQayUsAUoBM-Y6-85D2y4A"]
         
         let escapedQuery = queryString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
 
@@ -124,7 +126,7 @@ struct SearchBarView: View {
                 let dataDict = try JSONSerialization.jsonObject(with: data) as? [String: Any]
                 if let results = dataDict?["results"] as? Array<Dictionary<String, Any>> {
                     searchResults = results.compactMap({ resultDict in
-                        MovieRowViewModel(fromTDMBSearch: resultDict)
+                        MovieDetailsModel(fromTDMBSearch: resultDict)
                     })
                 }
             } catch {
