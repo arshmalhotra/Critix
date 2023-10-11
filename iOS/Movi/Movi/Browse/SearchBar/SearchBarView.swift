@@ -95,7 +95,7 @@ struct SearchBarView: View {
          * TODO: Make a server call instead which then calls the OMDB API
          */
         let headers = ["accept": "application/json",
-                       "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOGZmNjNlZDgwOWQ4OTU3ZDBjY2E4YmE4YTU5YzU4NCIsInN1YiI6IjY0ZjZkYjkzYThiMmNhMDEzODRhNzQ1OSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.ynGTfr0GBqlv38DsKPbrBOQayUsAUoBM-Y6-85D2y4A"]
+                       "Authorization": APIKeys.tmdb.rawValue]
         
         let escapedQuery = queryString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
 

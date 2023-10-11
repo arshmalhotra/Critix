@@ -26,7 +26,7 @@ struct ViewOffsetKey: PreferenceKey {
     }
 }
 
-struct DetailsView: View {
+struct MovieDetailsView: View {
     @Environment(\.dismiss) var dismiss
     
     @Binding var detailsVM: MovieDetailsModel
@@ -181,7 +181,7 @@ struct DetailsView: View {
 struct DetailView_Previews: PreviewProvider {
     static var previews: some View {
         return NavigationStack {
-            DetailsView(detailsVM: .constant(MockMovieDetailsModel.SpiritedAway(.full).detailModel))
+            MovieDetailsView(detailsVM: .constant(MockMovieDetailsModel.SpiritedAway(.full).detailModel))
                 .background(SystemColors.backgroundColor)
                 .environment(\.font, .inter())
         }

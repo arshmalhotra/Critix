@@ -24,7 +24,7 @@ struct BrowseView: View {
                 ScrollView {
                     VStack {
                         ForEach(searchResults) { movie in
-                            NavigationLink(destination: DetailsView(detailsVM: .constant(movie))) {
+                            NavigationLink(destination: MovieDetailsView(detailsVM: .constant(movie))) {
                                 MovieRowView(movieDetailsVM: movie, viewState: .search())
                             }
                             .simultaneousGesture(TapGesture().onEnded({ _ in
@@ -44,10 +44,10 @@ struct BrowseView: View {
          * TODO: Move the apikey out of the file
          * TODO: Make a server call instead which then calls the OMDB API
          */
-        let apiKey = "a036a667"
+        
         let escapedQuery = movie.title.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
         
-        var request = URLRequest(url: URL(string: "https://www.omdbapi.com/?apikey=\(apiKey)&type=movie&plot=short&t=\(escapedQuery!)&y=\(movie.releaseYear!)")!,
+        var request = URLRequest(url: URL(string: "https://www.omdbapi.com/?apikey=\(APIKeys.omdb.rawValue)&type=movie&plot=short&t=\(escapedQuery!)&y=\(movie.releaseYear!)")!,
                                  cachePolicy: .useProtocolCachePolicy,
                                  timeoutInterval: 10.0)
         request.httpMethod = "GET"
