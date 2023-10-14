@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum MovieRowViewState {
+enum MovieRowViewState: Equatable {
     case search(imageHeight: CGFloat = 63, titleSize: CGFloat = 18, titleWeight: Font.InterWeight = .semibold, detailsSize: CGFloat = 14)
     case feed(imageHeight: CGFloat = 144, titleSize: CGFloat = 20, titleWeight: Font.InterWeight = .bold, detailsSize: CGFloat = 16)
     case detail(imageHeight: CGFloat = 178, titleSize: CGFloat = 24, titleWeight: Font.InterWeight = .bold, detailsSize: CGFloat = 16)
@@ -15,6 +15,7 @@ enum MovieRowViewState {
 
 struct MovieRowView: View {
     let movieDetailsVM: MovieDetailsModel
+    let viewState: MovieRowViewState
     
     // Defaults set with bigger sizes
     var imageHeight: CGFloat = 144
@@ -26,6 +27,7 @@ struct MovieRowView: View {
     
     init(movieDetailsVM: MovieDetailsModel, viewState: MovieRowViewState) {
         self.movieDetailsVM = movieDetailsVM
+        self.viewState = viewState
         
         switch viewState {
         case .search(let imageHeight, let titleSize, let titleWeight, let detailsSize),
@@ -61,6 +63,8 @@ struct MovieRowView: View {
                 Text(movieDetailsVM.title)
                     .foregroundColor(SystemColors.primaryColor)
                     .font(.inter(self.titleWeight, size: self.titleSize))
+                    .multilineTextAlignment(.leading)
+                    .lineLimit(2)
                 
                 // MARK: Quick Details
                 HStack {
@@ -85,6 +89,25 @@ struct MovieRowView: View {
                         .padding(.top, 5)
                 }
             }
+            if self.viewState == .search() {
+                VStack {
+                    HStack {
+                        Button {
+                            
+                        } label: {
+                            Image("Bookmark")
+                        }
+                        Button {
+                            
+                        } label: {
+                            // TODO: Replace image with gray or SF Symbol
+                            Image("Star")
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                }
+                .frame(height: self.imageHeight, alignment: .center)
+            }
         }
         .padding(.horizontal, 18)
         .padding(.vertical, 5)
@@ -103,7 +126,7 @@ struct SearchResultRowView_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
             Section("Detail View") {
-                MovieRowView(movieDetailsVM: MockMovieDetailsModel.Oppenheimer(.full).detailModel, viewState: .detail())
+                MovieRowView(movieDetailsVM: MockMovieDetailsModel.GirlWithDragonTatoo(.full).detailModel, viewState: .detail())
                     .border(.white)
             }
             Section("Feed View") {

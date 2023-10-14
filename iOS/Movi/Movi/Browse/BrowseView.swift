@@ -41,7 +41,6 @@ struct BrowseView: View {
     
     private func populateOMDBQuery(into movie: MovieDetailsModel) {
         /**
-         * TODO: Move the apikey out of the file
          * TODO: Make a server call instead which then calls the OMDB API
          */
         

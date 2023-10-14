@@ -91,7 +91,6 @@ struct SearchBarView: View {
             return
         }
         /**
-         * TODO: Move the apikey out of the file
          * TODO: Make a server call instead which then calls the OMDB API
          */
         let headers = ["accept": "application/json",

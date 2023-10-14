@@ -8,14 +8,15 @@
 import Foundation
 
 enum MockMovieDetailsModel {
-        case SpiritedAway(_ detailLevel: DetailLevel = .search)
-        case Barbie(_ detailLevel: DetailLevel = .search)
-        case Oppenheimer(_ detailLevel: DetailLevel = .search)
+    case SpiritedAway(_ detailLevel: DetailLevel = .search)
+    case Barbie(_ detailLevel: DetailLevel = .search)
+    case Oppenheimer(_ detailLevel: DetailLevel = .search)
+    case GirlWithDragonTatoo(_ detailLevel: DetailLevel = .search)
         
-        enum DetailLevel {
-            case search
-            case full
-        }
+    enum DetailLevel {
+        case search
+        case full
+    }
         
     var detailModel: MovieDetailsModel {
         switch self {
@@ -68,6 +69,23 @@ enum MockMovieDetailsModel {
                                                  "Actors":"Cillian Murphy, Emily Blunt, Matt Damon",
                                                  "Plot":"The story of American scientist, J. Robert Oppenheimer, and his role in the development of the atomic bomb.",
                                                  "imdbID":"tt15398776"])
+            }
+            return dummyData!
+        case .GirlWithDragonTatoo(let detailLevel):
+            let dummyData = MovieDetailsModel(fromTDMBSearch: ["id": 65754,
+                                                               "backdrop_path": "/7Rk0eX4bpis4EeumxcxdH9FuYs8.jpg",
+                                                               "poster_path": "/zqDopwg7XQ4IfFX2dRlQCT1SwMG.jpg",
+                                                               "release_date": "2011-12-14",
+                                                               "title": "The Girl with the Dragon Tattoo"])
+            if detailLevel == .full {
+                _ = dummyData!.append(fromOMDB: ["Rated":"R",
+                                                 "Runtime":"158 min",
+                                                 "Genre":"Crime, Drama, Mystery",
+                                                 "Director":"David Fincher",
+                                                 "Writer":"Steven Zaillian, Stieg Larsson",
+                                                 "Actors":"Daniel Craig, Rooney Mara, Christopher Plummer",
+                                                 "Plot":"Journalist Mikael Blomkvist is aided in his search for a woman who has been missing for 40 years by young computer hacker Lisbeth Salander.",
+                                                 "imdbID":"tt1568346"])
             }
             return dummyData!
         }
