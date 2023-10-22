@@ -20,10 +20,10 @@ struct AppTitle: View {
                     .resizable()
                     .aspectRatio(contentMode: /*@START_MENU_TOKEN@*/.fit/*@END_MENU_TOKEN@*/)
                     .edgesIgnoringSafeArea(.top)
-                    .position(x: UIScreen.main.bounds.width / 2, y: 60)
+                    .position(x: UIScreen.main.bounds.width / 2, y: 100)
                 // maybe change offset amounts to .position and use UIscreen bounds like ^
                 VStack{
-                    Image("Home_logo")
+                    Image("Clapper")
                         .resizable()
                         .aspectRatio(contentMode: /*@START_MENU_TOKEN@*/.fit/*@END_MENU_TOKEN@*/)
                         .padding(.all, 50.0)
